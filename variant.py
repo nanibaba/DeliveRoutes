@@ -10,9 +10,9 @@ class Variant(Product):
         self._price = price
         self._description = description
         self._properties = {
-            "sizes": properties['sizes'],
-            "colors": properties['colors'],
-            "fit": properties['fit']
+            "sizes": properties["sizes"],
+            "colors": properties["colors"],
+            "fit": properties["fit"]
         }
 
     @property
@@ -54,8 +54,8 @@ class Variant(Product):
     @properties.setter
     def properties(self, properties):
         self._properties = {
-            "sizes": properties['sizes'],
-            "colors": properties['colors'],
-            "fit": properties['fit']
+            "sizes": properties["sizes"],
+            "colors": properties["colors"],
+            "fit": properties["fit"]
         }
 
