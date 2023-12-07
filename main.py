@@ -50,23 +50,49 @@ def main():
     variants = []
     products = []
     product_types = []
-
     config = read_config()
     products_file = config['Files']['products_file']
 
-    print("Welcome to DeliveRoutes!", end="\n\n")
+    print("Welcome to DeliveRoutes!")
+    print("What would you like to do?")
+    print("Enter 'view' to view the list of products.")
+    print("Enter 'view-expanded' to view the expanded list of products.")
+    print("Enter 'sort' to sort the expanded list of products", end=" ")
+    print("by a selected property.")
+    print("Enter 'order' to create a sales order.")
+    print("Enter '-1' to quit the program.", end="\n\n")
 
-    with open(products_file, "r") as product_DB:
-        reader = csv.reader(product_DB, delimiter=",")
-        next(reader)
-        for line in reader:
-            variants.append(map_variant(line, product_types))
-        for type in product_types:
-            products.append(map_product(type, variants))
-        
-        for product in products: 
-            print(f"Product ID: {product.ID}")
-            print(f"Product Name: {product.name}", end="\n\n")
+    command = input("Command: ")
+    print("\n")
+    while command != '-1':
+
+        if (command != 'view' and command != 'view-expanded' 
+                and command != 'sort' and command != '-1'):
+            print("Invalid command!", end="\n\n")
+        else: 
+            with open(products_file, "r") as product_DB:
+                reader = csv.reader(product_DB, delimiter=",")
+                next(reader)
+                for line in reader:
+                    variants.append(map_variant(line, product_types))
+                for type in product_types:
+                    products.append(map_product(type, variants))
+            if command == 'view':
+                for product in products: 
+                    print(f"Product ID: {product.ID}")
+                    print(f"Product Name: {product.name}", end="\n\n")
+            elif command == 'view-expanded':
+                for product in products: 
+                    for variant in product.variants:
+                        print(f"Variant ID: {variant.ID}")
+                        print(f"Variant Name: {variant.variant_name}")
+                        print(f"Variant Country: {variant.country_of_origin}")
+                        print(f"Variant Price: {variant.price}")
+                        print(f"Variant Description: {variant.description}")
+                        print(f"Variant Properties: {variant.properties}")
+                        print(f"Variant Type: {variant.name}", end="\n\n")
+        command = input("Command: ")
+        print("\n")
 
 
 if __name__ == '__main__':
