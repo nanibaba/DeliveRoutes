@@ -46,6 +46,22 @@ def map_product(type, variants):
     return product
 
 
+def view(ID, name):
+    print(f"Product ID: {ID}")
+    print(f"Product Name: {name}", end="\n\n")
+
+
+def view_expanded(ID, variant_name, country_of_origin, 
+                  price, description, properties, name): 
+    print(f"Variant ID: {ID}")
+    print(f"Variant Name: {variant_name}")
+    print(f"Variant Country of Origin: {country_of_origin}")
+    print(f"Variant Price: {price}")
+    print(f"Variant Description: {description}")
+    print(f"Variant Properties: {properties}")
+    print(f"Variant Type: {name}", end="\n\n")
+
+
 def main():
     variants = []
     products = []
@@ -63,13 +79,13 @@ def main():
     print("Enter '-1' to quit the program.", end="\n\n")
 
     command = input("Command: ")
-    print("\n")
     while command != '-1':
 
         if (command != 'view' and command != 'view-expanded' 
                 and command != 'sort' and command != '-1'):
             print("Invalid command!", end="\n\n")
         else: 
+            print("\n")
             with open(products_file, "r") as product_DB:
                 reader = csv.reader(product_DB, delimiter=",")
                 next(reader)
@@ -79,20 +95,16 @@ def main():
                     products.append(map_product(type, variants))
             if command == 'view':
                 for product in products: 
-                    print(f"Product ID: {product.ID}")
-                    print(f"Product Name: {product.name}", end="\n\n")
+                    view(product.ID, product.name)
             elif command == 'view-expanded':
                 for product in products: 
                     for variant in product.variants:
-                        print(f"Variant ID: {variant.ID}")
-                        print(f"Variant Name: {variant.variant_name}")
-                        print(f"Variant Country: {variant.country_of_origin}")
-                        print(f"Variant Price: {variant.price}")
-                        print(f"Variant Description: {variant.description}")
-                        print(f"Variant Properties: {variant.properties}")
-                        print(f"Variant Type: {variant.name}", end="\n\n")
+                        view_expanded(variant.ID, variant.variant_name, 
+                                      variant.country_of_origin, variant.price, 
+                                      variant.description, variant.properties, 
+                                      variant.name)
+                        
         command = input("Command: ")
-        print("\n")
 
 
 if __name__ == '__main__':
