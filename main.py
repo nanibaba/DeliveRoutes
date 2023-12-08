@@ -46,6 +46,51 @@ def map_product(type, variants):
     return product
 
 
+def select_product(product_types, products):
+    try: 
+        selection = input("Product: ")
+        if selection not in product_types: 
+            raise Exception()
+    except Exception:
+        print("No such product exists!", end="\n\n")
+        selection = input("Product: ")
+    else:
+        selected_product = list(
+            filter(lambda product: product.name == selection, 
+                   products))[0]
+        for variant in selected_product.variants:
+            view_expanded(variant.ID, variant.variant_name, 
+                          variant.country_of_origin, variant.price, 
+                          variant.description, variant.properties, 
+                          variant.name)
+        sort_product(selected_product)
+            
+
+def sort_product(selected_product):
+    print("To sort the variant by name, enter 'name'.")
+    print("To sort it by price, enter 'price'.", end="\n\n")
+    try: 
+        selection = input("Sort by: ")
+        if (selection != "name" and selection != "price"): 
+            raise Exception()
+    except Exception:
+        print("Enter a valid sort type!", end="\n\n")
+        selection = input("Sort by: ")
+    else: 
+        if selection == 'name': 
+            selected_product.variants.sort(
+                key=lambda variant: variant.variant_name)
+        elif selection == 'price': 
+            selected_product.variants.sort(
+                key=lambda variant: variant.price)
+            
+        for variant in selected_product.variants:
+            view_expanded(variant.ID, variant.variant_name, 
+                          variant.country_of_origin, variant.price,
+                          variant.description, variant.properties, 
+                          variant.name)
+
+
 def view(ID, name):
     print(f"Product ID: {ID}")
     print(f"Product Name: {name}", end="\n\n")
@@ -72,17 +117,13 @@ def main():
     print("Welcome to DeliveRoutes!")
     print("What would you like to do?")
     print("Enter 'view' to view the list of products.")
-    print("Enter 'view-expanded' to view the expanded list of products.")
-    print("Enter 'sort' to sort the expanded list of products", end=" ")
-    print("by a selected property.")
     print("Enter 'order' to create a sales order.")
     print("Enter '-1' to quit the program.", end="\n\n")
 
     command = input("Command: ")
     while command != '-1':
 
-        if (command != 'view' and command != 'view-expanded' 
-                and command != 'sort' and command != '-1'):
+        if (command != 'view' and command != 'order' and command != '-1'):
             print("Invalid command!", end="\n\n")
         else: 
             print("\n")
@@ -94,17 +135,16 @@ def main():
                 for type in product_types:
                     products.append(map_product(type, variants))
             if command == 'view':
+                print("Here's the list of products.", end="\n\n")
                 for product in products: 
                     view(product.ID, product.name)
-            elif command == 'view-expanded':
-                for product in products: 
-                    for variant in product.variants:
-                        view_expanded(variant.ID, variant.variant_name, 
-                                      variant.country_of_origin, variant.price, 
-                                      variant.description, variant.properties, 
-                                      variant.name)
-                        
-        command = input("Command: ")
+
+                print("If you would like to see more info about", end=" ")
+                print("a particular product, enter the name of the product.", 
+                      end="\n\n")
+                select_product(product_types, products)
+                    
+            command = input("Command: ")
 
 
 if __name__ == '__main__':
