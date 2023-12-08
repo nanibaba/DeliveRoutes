@@ -1,6 +1,13 @@
+# This file contains functions and the main program for managing product 
+# variants, products, and orders.
+# It includes functionality to read configuration, map product variants, 
+# select and sort products, 
+# view product details, create orders, and run the main application loop.
+
 from decimal import Decimal
 from variant import Variant
 from product import Product
+from order import Order
 import csv
 import configparser
 
@@ -47,13 +54,9 @@ def map_product(type, variants):
 
 
 def select_product(product_types, products):
-    try: 
-        selection = input("Product: ")
-        if selection not in product_types: 
-            raise Exception()
-    except Exception:
-        print("No such product exists!", end="\n\n")
-        selection = input("Product: ")
+    selection = input("Product: ")
+    if selection not in product_types: 
+        raise Exception()
     else:
         selected_product = list(
             filter(lambda product: product.name == selection, 
@@ -63,7 +66,8 @@ def select_product(product_types, products):
                           variant.country_of_origin, variant.price, 
                           variant.description, variant.properties, 
                           variant.name)
-        sort_product(selected_product)
+    
+    return selected_product
             
 
 def sort_product(selected_product):
@@ -107,10 +111,39 @@ def view_expanded(ID, variant_name, country_of_origin,
     print(f"Variant Type: {name}", end="\n\n")
 
 
+def view_order(ID, client_name, delivery_location, products):
+    print("Your sales order: ", end="\n\n")
+    print(f"Sales Order ID: {ID}")
+    print(f"Client Name: {client_name}")
+    print(f"Delivery Location : {delivery_location}")
+    for product in products: 
+        print(f"Product Name: {product.name}")
+    print("\n\n")
+
+
+def create_order(product_types, products):
+    selected_products = []
+    print("To create a sales order, specify the following: ", 
+          end="\n\n")
+    client_name = input("Client Name: ")
+    delivery_location = input("Delivery Location: ")
+    print("Enter the name of a product", end=" ")
+    print("to include into the sales order.")
+    try: 
+        selected_product = select_product(product_types, products)
+        selected_products.append(selected_product)
+    except Exception:
+        print("No such product exists!", end="\n\n")
+
+    return Order(client_name, delivery_location, 
+                 selected_products)
+
+
 def main():
     variants = []
     products = []
     product_types = []
+    sales_orders = []
     config = read_config()
     products_file = config['Files']['products_file']
 
@@ -142,7 +175,18 @@ def main():
                 print("If you would like to see more info about", end=" ")
                 print("a particular product, enter the name of the product.", 
                       end="\n\n")
-                select_product(product_types, products)
+                try:
+                    selected_product = select_product(product_types, products)
+                except Exception:
+                    print("No such product exists!", end="\n\n")
+                else: 
+                    sort_product(selected_product)
+
+            elif command == 'order':
+                sales_order = create_order(product_types, products)
+                sales_orders.append(sales_order) 
+                view_order(sales_order.ID, sales_order.client_name, 
+                           sales_order.delivery_location, sales_order.products)                  
                     
             command = input("Command: ")
 
