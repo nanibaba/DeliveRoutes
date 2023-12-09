@@ -188,7 +188,7 @@ def main():
                 view_order(sales_order.ID, sales_order.client_name, 
                            sales_order.delivery_location, sales_order.products)                  
                     
-            command = input("Command: ")
+        command = input("Command: ")
 
 
 if __name__ == '__main__':
